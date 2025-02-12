@@ -1,7 +1,7 @@
-
 import { useState } from "react";
 import { Search, MapPin, Bell, UtensilsCrossed, Salad, ChefHat, Fish, Cookie } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { useNavigate } from "react-router-dom";
 
 const mockCategories = [
   { id: 1, name: "Biryani", icon: <UtensilsCrossed className="h-6 w-6" /> },
@@ -25,6 +25,7 @@ const mockRestaurants = [
 
 const Catalog = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
 
   return (
     <div className="pt-4 pb-20 animate-fade-in">
@@ -78,7 +79,11 @@ const Catalog = () => {
         <div>
           <h2 className="text-lg font-semibold mb-4">All Restaurants</h2>
           {mockRestaurants.map((restaurant) => (
-            <div key={restaurant.id} className="mb-4 border rounded-lg p-4">
+            <div 
+              key={restaurant.id} 
+              className="mb-4 border rounded-lg p-4 cursor-pointer hover:border-orange-500 transition-colors"
+              onClick={() => navigate(`/restaurant/${restaurant.id}`)}
+            >
               <div className="flex items-center justify-between mb-2">
                 <h3 className="font-medium">{restaurant.name}</h3>
                 {restaurant.closed && (
