@@ -1,56 +1,62 @@
 
-import { Minus, Plus, X } from "lucide-react";
+import { ChevronLeft, Minus, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const mockCartItems = [
   {
     id: 1,
-    name: "Premium T-Shirt",
-    price: 29.99,
+    name: "Mutton Manchurain",
+    price: 317,
     quantity: 1,
-    image: "https://source.unsplash.com/400x400/?tshirt"
-  },
-  {
-    id: 2,
-    name: "Designer Jeans",
-    price: 89.99,
-    quantity: 1,
-    image: "https://source.unsplash.com/400x400/?jeans"
+    image: "https://source.unsplash.com/400x400/?mutton",
+    variations: "Size - Plain"
   }
 ];
 
 const Cart = () => {
-  const total = mockCartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const subtotal = mockCartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const addons = 0;
+  const total = subtotal + addons;
 
   return (
     <div className="pt-4 pb-32 animate-fade-in">
-      <h1 className="text-2xl font-semibold mb-6">Shopping Cart</h1>
+      <header className="flex items-center gap-4 mb-6">
+        <Link to="/" className="text-gray-600">
+          <ChevronLeft className="h-6 w-6" />
+        </Link>
+        <h1 className="text-xl font-semibold">My Cart</h1>
+      </header>
       
       <div className="space-y-4">
         {mockCartItems.map((item) => (
-          <div key={item.id} className="flex gap-4 p-4 bg-white rounded-lg shadow-sm">
+          <div key={item.id} className="flex gap-4">
             <div className="w-20 h-20 bg-gray-100 rounded-md overflow-hidden">
               <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
             </div>
             
             <div className="flex-1">
               <div className="flex justify-between items-start">
-                <h3 className="font-medium">{item.name}</h3>
-                <button className="text-gray-400 hover:text-gray-600">
-                  <X className="h-4 w-4" />
-                </button>
+                <div>
+                  <h3 className="font-medium">{item.name}</h3>
+                  <p className="text-sm text-gray-500">⭐️⭐️⭐️⭐️⭐️</p>
+                  <p className="text-sm text-gray-500">Variations: {item.variations}</p>
+                </div>
+                <div className="text-right">
+                  <p className="font-medium">₹{item.price}</p>
+                </div>
               </div>
               
-              <p className="text-gray-600">${item.price}</p>
-              
-              <div className="flex items-center gap-2 mt-2">
-                <button className="p-1 hover:bg-gray-100 rounded">
-                  <Minus className="h-4 w-4" />
-                </button>
-                <span className="w-8 text-center">{item.quantity}</span>
-                <button className="p-1 hover:bg-gray-100 rounded">
-                  <Plus className="h-4 w-4" />
-                </button>
+              <div className="flex justify-between items-center mt-2">
+                <div className="flex items-center gap-3 border rounded-full px-3 py-1">
+                  <button className="text-orange-500">
+                    <Minus className="h-4 w-4" />
+                  </button>
+                  <span className="w-8 text-center">{item.quantity}</span>
+                  <button className="text-orange-500">
+                    <Plus className="h-4 w-4" />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -59,12 +65,22 @@ const Cart = () => {
       
       <div className="fixed bottom-16 left-0 right-0 bg-white border-t p-4">
         <div className="container mx-auto">
-          <div className="flex justify-between items-center mb-4">
-            <span className="font-medium">Total</span>
-            <span className="font-semibold">${total.toFixed(2)}</span>
+          <div className="space-y-2 mb-4">
+            <div className="flex justify-between">
+              <span>Item Price</span>
+              <span>₹{subtotal}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Addons</span>
+              <span>₹{addons}</span>
+            </div>
+            <div className="flex justify-between font-medium">
+              <span>Subtotal</span>
+              <span>₹{total}</span>
+            </div>
           </div>
           
-          <Button className="w-full" size="lg">
+          <Button className="w-full bg-orange-500 hover:bg-orange-600" size="lg">
             Proceed to Checkout
           </Button>
         </div>
