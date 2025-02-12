@@ -1,7 +1,9 @@
 
-import { ChevronLeft, Clock, MapPin, Star, Info } from "lucide-react";
+import { ChevronLeft, Clock, MapPin, Star, AlertCircle, Heart } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
+import { useState, useEffect } from "react";
 
 const mockMenuItems = [
   {
@@ -96,15 +98,81 @@ const mockMenuItems = [
   }
 ];
 
+interface CartItem {
+  id: number;
+  name: string;
+  price: number;
+  quantity: number;
+  variations?: string;
+}
+
 const RestaurantDetail = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const [isFavorite, setIsFavorite] = useState(false);
+
+  // Check if restaurant is favorite on mount
+  useEffect(() => {
+    const favorites = JSON.parse(sessionStorage.getItem('favorites') || '[]');
+    setIsFavorite(favorites.includes(1)); // Using hardcoded ID 1 for demo
+  }, []);
+
+  const toggleFavorite = () => {
+    const favorites = JSON.parse(sessionStorage.getItem('favorites') || '[]');
+    const restaurantId = 1; // Hardcoded for demo
+    
+    if (favorites.includes(restaurantId)) {
+      const newFavorites = favorites.filter((id: number) => id !== restaurantId);
+      sessionStorage.setItem('favorites', JSON.stringify(newFavorites));
+      setIsFavorite(false);
+      toast({
+        description: "Removed from favorites",
+      });
+    } else {
+      favorites.push(restaurantId);
+      sessionStorage.setItem('favorites', JSON.stringify(favorites));
+      setIsFavorite(true);
+      toast({
+        description: "Added to favorites",
+      });
+    }
+  };
+
+  const addToCart = (item: typeof mockMenuItems[0]) => {
+    const currentCart = JSON.parse(sessionStorage.getItem('cart') || '[]') as CartItem[];
+    const existingItemIndex = currentCart.findIndex(cartItem => cartItem.id === item.id);
+
+    if (existingItemIndex > -1) {
+      currentCart[existingItemIndex].quantity += 1;
+    } else {
+      currentCart.push({
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        quantity: 1
+      });
+    }
+
+    sessionStorage.setItem('cart', JSON.stringify(currentCart));
+    toast({
+      description: "Added to cart",
+    });
+  };
 
   return (
     <div className="pb-20 animate-fade-in">
       <div className="bg-orange-500 text-white p-4">
-        <button onClick={() => navigate(-1)} className="mb-4">
-          <ChevronLeft className="h-6 w-6" />
-        </button>
+        <div className="flex items-center justify-between mb-4">
+          <button onClick={() => navigate(-1)}>
+            <ChevronLeft className="h-6 w-6" />
+          </button>
+          <button 
+            onClick={toggleFavorite}
+            className={`${isFavorite ? 'text-red-500' : 'text-white'}`}
+          >
+            <Heart className="h-6 w-6 fill-current" />
+          </button>
+        </div>
         
         <div className="mb-6">
           <h1 className="text-2xl font-bold mb-2">MAYURI INN HOTEL</h1>
@@ -146,7 +214,11 @@ const RestaurantDetail = () => {
                   <div className="flex items-center gap-2">
                     <span className={`w-3 h-3 ${item.isVeg ? 'bg-green-500' : 'bg-red-500'} rounded-full`}></span>
                     <h3 className="font-medium">{item.name}</h3>
-                    {item.isSpicy && <Info className="h-4 w-4 text-orange-500" title="Spicy" />}
+                    {item.isSpicy && (
+                      <div className="flex items-center gap-1">
+                        <AlertCircle className="h-4 w-4 text-orange-500" aria-label="Spicy" />
+                      </div>
+                    )}
                   </div>
                   <p className="text-sm text-gray-500 mt-1">{item.description}</p>
                   <div className="flex items-center gap-2 mt-2">
@@ -156,7 +228,12 @@ const RestaurantDetail = () => {
                 </div>
                 <div className="text-right">
                   <p className="font-medium">₹{item.price}</p>
-                  <Button variant="outline" className="mt-2" size="sm">
+                  <Button 
+                    variant="outline" 
+                    className="mt-2" 
+                    size="sm"
+                    onClick={() => addToCart(item)}
+                  >
                     Add
                   </Button>
                 </div>
