@@ -6,10 +6,9 @@ import { Link } from "react-router-dom";
 const mockCartItems = [
   {
     id: 1,
-    name: "Mutton Manchurain",
+    name: "Mutton Manchurian",
     price: 317,
     quantity: 1,
-    image: "https://source.unsplash.com/400x400/?mutton",
     variations: "Size - Plain"
   }
 ];
@@ -31,8 +30,8 @@ const Cart = () => {
       <div className="space-y-4">
         {mockCartItems.map((item) => (
           <div key={item.id} className="flex gap-4">
-            <div className="w-20 h-20 bg-gray-100 rounded-md overflow-hidden">
-              <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+            <div className="w-20 h-20 bg-orange-100 rounded-md flex items-center justify-center text-orange-500">
+              <ChevronLeft className="h-8 w-8" />
             </div>
             
             <div className="flex-1">

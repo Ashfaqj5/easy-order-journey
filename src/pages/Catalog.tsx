@@ -1,14 +1,14 @@
 
 import { useState } from "react";
-import { Search, MapPin, Bell } from "lucide-react";
+import { Search, MapPin, Bell, UtensilsCrossed, Salad, ChefHat, Fish, Cookie } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 const mockCategories = [
-  { id: 1, name: "Biryani", image: "https://source.unsplash.com/100x100/?biryani" },
-  { id: 2, name: "Veg Snacks", image: "https://source.unsplash.com/100x100/?vegetables" },
-  { id: 3, name: "Chicken", image: "https://source.unsplash.com/100x100/?chicken" },
-  { id: 4, name: "Fish", image: "https://source.unsplash.com/100x100/?fish" },
-  { id: 5, name: "Desserts", image: "https://source.unsplash.com/100x100/?dessert" }
+  { id: 1, name: "Biryani", icon: <UtensilsCrossed className="h-6 w-6" /> },
+  { id: 2, name: "Veg Snacks", icon: <Salad className="h-6 w-6" /> },
+  { id: 3, name: "Chicken", icon: <ChefHat className="h-6 w-6" /> },
+  { id: 4, name: "Fish", icon: <Fish className="h-6 w-6" /> },
+  { id: 5, name: "Desserts", icon: <Cookie className="h-6 w-6" /> }
 ];
 
 const mockRestaurants = [
@@ -18,7 +18,6 @@ const mockRestaurants = [
     rating: 4.5,
     deliveryTime: "30-40 min",
     address: "Alta Bus Stand Road, Jublee Nagar Colony",
-    image: "https://source.unsplash.com/400x200/?restaurant",
     cuisine: "Indian, Chinese, Tandoor",
     closed: true
   }
@@ -51,12 +50,12 @@ const Catalog = () => {
       </div>
 
       <div className="mb-8">
-        <div className="aspect-[2/1] rounded-lg overflow-hidden mb-6">
-          <img
-            src="/lovable-uploads/f5e4d1b7-f9e1-4925-8f82-28051e875aeb.png"
-            alt="Special offer"
-            className="w-full h-full object-cover"
-          />
+        <div className="bg-orange-100 rounded-lg p-6 mb-6 flex items-center justify-between">
+          <div>
+            <h3 className="text-lg font-semibold text-orange-800 mb-2">Special Offer</h3>
+            <p className="text-sm text-orange-700">Get 20% off on your first order!</p>
+          </div>
+          <UtensilsCrossed className="h-12 w-12 text-orange-500" />
         </div>
 
         <div className="mb-4">
@@ -67,12 +66,8 @@ const Catalog = () => {
           <div className="flex gap-4 overflow-x-auto pb-2">
             {mockCategories.map((category) => (
               <div key={category.id} className="flex flex-col items-center min-w-[80px]">
-                <div className="w-16 h-16 rounded-full overflow-hidden mb-2">
-                  <img
-                    src={category.image}
-                    alt={category.name}
-                    className="w-full h-full object-cover"
-                  />
+                <div className="w-16 h-16 rounded-full bg-orange-100 flex items-center justify-center mb-2 text-orange-500">
+                  {category.icon}
                 </div>
                 <span className="text-xs text-center">{category.name}</span>
               </div>
@@ -83,26 +78,25 @@ const Catalog = () => {
         <div>
           <h2 className="text-lg font-semibold mb-4">All Restaurants</h2>
           {mockRestaurants.map((restaurant) => (
-            <div key={restaurant.id} className="mb-4">
-              <div className="relative aspect-[2/1] rounded-lg overflow-hidden mb-2">
-                <img
-                  src={restaurant.image}
-                  alt={restaurant.name}
-                  className="w-full h-full object-cover"
-                />
+            <div key={restaurant.id} className="mb-4 border rounded-lg p-4">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="font-medium">{restaurant.name}</h3>
                 {restaurant.closed && (
-                  <div className="absolute top-2 left-2 bg-black text-white text-xs px-2 py-1 rounded">
+                  <div className="bg-red-100 text-red-600 text-xs px-2 py-1 rounded">
                     Closed Now
                   </div>
                 )}
               </div>
-              <h3 className="font-medium">{restaurant.name}</h3>
               <div className="flex items-center gap-2 text-sm text-gray-500">
                 <span>⭐️ {restaurant.rating}</span>
                 <span>•</span>
                 <span>{restaurant.deliveryTime}</span>
               </div>
               <p className="text-sm text-gray-500">{restaurant.cuisine}</p>
+              <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
+                <MapPin className="h-4 w-4" />
+                {restaurant.address}
+              </p>
             </div>
           ))}
         </div>
