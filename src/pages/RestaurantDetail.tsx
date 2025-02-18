@@ -1,102 +1,28 @@
-
 import { ChevronLeft, Clock, MapPin, Star, AlertCircle, Heart } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { useState, useEffect } from "react";
+import { restaurants, menuItems } from "@/data/mockData";
 
-const mockMenuItems = [
-  {
-    id: 1,
-    name: "Chicken Biryani",
-    price: 280,
-    description: "Aromatic basmati rice cooked with tender chicken pieces and spices",
-    isVeg: false,
-    rating: 4.5,
-    isSpicy: true
-  },
-  {
-    id: 2,
-    name: "Paneer Butter Masala",
-    price: 220,
-    description: "Fresh cottage cheese cubes in rich tomato gravy",
-    isVeg: true,
-    rating: 4.3,
-    isSpicy: false
-  },
-  {
-    id: 3,
-    name: "Mutton Manchurian",
-    price: 320,
-    description: "Indo-Chinese style mutton with spicy sauce",
-    isVeg: false,
-    rating: 4.6,
-    isSpicy: true
-  },
-  {
-    id: 4,
-    name: "Veg Fried Rice",
-    price: 180,
-    description: "Wok-tossed rice with mixed vegetables",
-    isVeg: true,
-    rating: 4.2,
-    isSpicy: false
-  },
-  {
-    id: 5,
-    name: "Fish Curry",
-    price: 260,
-    description: "Traditional fish curry with coconut base",
-    isVeg: false,
-    rating: 4.4,
-    isSpicy: true
-  },
-  {
-    id: 6,
-    name: "Dal Tadka",
-    price: 160,
-    description: "Yellow lentils tempered with spices",
-    isVeg: true,
-    rating: 4.1,
-    isSpicy: false
-  },
-  {
-    id: 7,
-    name: "Chicken 65",
-    price: 240,
-    description: "Spicy deep-fried chicken",
-    isVeg: false,
-    rating: 4.7,
-    isSpicy: true
-  },
-  {
-    id: 8,
-    name: "Vegetable Samosa",
-    price: 40,
-    description: "Crispy pastry filled with spiced potatoes",
-    isVeg: true,
-    rating: 4.3,
-    isSpicy: false
-  },
-  {
-    id: 9,
-    name: "Butter Chicken",
-    price: 300,
-    description: "Tandoori chicken in rich butter tomato gravy",
-    isVeg: false,
-    rating: 4.8,
-    isSpicy: false
-  },
-  {
-    id: 10,
-    name: "Mushroom Masala",
-    price: 200,
-    description: "Fresh mushrooms in spiced onion tomato gravy",
-    isVeg: true,
-    rating: 4.2,
-    isSpicy: true
-  }
-];
+interface Restaurant {
+  id: number;
+  name: string;
+  cuisineTypes: string[];
+  rating: number;
+  deliveryTime: string;
+  address: string;
+}
+
+interface MenuItem {
+  id: number;
+  name: string;
+  price: number;
+  description: string;
+  isVeg: boolean;
+  rating: number;
+  isSpicy: boolean;
+}
 
 interface CartItem {
   id: number;
@@ -108,18 +34,32 @@ interface CartItem {
 
 const RestaurantDetail = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
   const { toast } = useToast();
   const [isFavorite, setIsFavorite] = useState(false);
+  const [cartQuantities, setCartQuantities] = useState<Record<number, number>>({});
 
-  // Check if restaurant is favorite on mount
+  const restaurant = restaurants.find(r => r.id === Number(id));
+  const restaurantMenu = menuItems[Number(id) as keyof typeof menuItems] || [];
+
   useEffect(() => {
     const favorites = JSON.parse(sessionStorage.getItem('favorites') || '[]');
-    setIsFavorite(favorites.includes(1)); // Using hardcoded ID 1 for demo
+    setIsFavorite(favorites.includes(Number(id)));
+  }, [id]);
+
+  useEffect(() => {
+    // Load initial cart quantities
+    const currentCart = JSON.parse(sessionStorage.getItem('cart') || '[]') as CartItem[];
+    const quantities: Record<number, number> = {};
+    currentCart.forEach(item => {
+      quantities[item.id] = item.quantity;
+    });
+    setCartQuantities(quantities);
   }, []);
 
   const toggleFavorite = () => {
     const favorites = JSON.parse(sessionStorage.getItem('favorites') || '[]');
-    const restaurantId = 1; // Hardcoded for demo
+    const restaurantId = Number(id);
     
     if (favorites.includes(restaurantId)) {
       const newFavorites = favorites.filter((id: number) => id !== restaurantId);
@@ -138,26 +78,46 @@ const RestaurantDetail = () => {
     }
   };
 
-  const addToCart = (item: typeof mockMenuItems[0]) => {
+  const updateCart = (item: MenuItem, quantity: number) => {
     const currentCart = JSON.parse(sessionStorage.getItem('cart') || '[]') as CartItem[];
     const existingItemIndex = currentCart.findIndex(cartItem => cartItem.id === item.id);
 
-    if (existingItemIndex > -1) {
-      currentCart[existingItemIndex].quantity += 1;
+    if (quantity <= 0) {
+      // Remove item if quantity is 0 or negative
+      if (existingItemIndex > -1) {
+        currentCart.splice(existingItemIndex, 1);
+        const newQuantities = { ...cartQuantities };
+        delete newQuantities[item.id];
+        setCartQuantities(newQuantities);
+      }
     } else {
-      currentCart.push({
-        id: item.id,
-        name: item.name,
-        price: item.price,
-        quantity: 1
-      });
+      if (existingItemIndex > -1) {
+        currentCart[existingItemIndex].quantity = quantity;
+      } else {
+        currentCart.push({
+          id: item.id,
+          name: item.name,
+          price: item.price,
+          quantity: quantity
+        });
+      }
+      setCartQuantities(prev => ({ ...prev, [item.id]: quantity }));
     }
 
     sessionStorage.setItem('cart', JSON.stringify(currentCart));
+  };
+
+  const addToCart = (item: MenuItem) => {
+    const newQuantity = (cartQuantities[item.id] || 0) + 1;
+    updateCart(item, newQuantity);
     toast({
       description: "Added to cart",
     });
   };
+
+  if (!restaurant) {
+    return <div className="p-4 text-red-500">Restaurant not found</div>;
+  }
 
   return (
     <div className="pb-20 animate-fade-in">
@@ -175,23 +135,23 @@ const RestaurantDetail = () => {
         </div>
         
         <div className="mb-6">
-          <h1 className="text-2xl font-bold mb-2">MAYURI INN HOTEL</h1>
-          <p className="text-sm opacity-90 mb-2">Indian, Chinese, Tandoor</p>
+          <h1 className="text-2xl font-bold mb-2">{restaurant.name}</h1>
+          <p className="text-sm opacity-90 mb-2">{restaurant.cuisine}</p>
           <div className="flex items-center gap-4 text-sm">
             <div className="flex items-center gap-1">
               <Star className="h-4 w-4" />
-              <span>4.5</span>
+              <span>{restaurant.rating}</span>
             </div>
             <div className="flex items-center gap-1">
               <Clock className="h-4 w-4" />
-              <span>30-40 min</span>
+              <span>{restaurant.deliveryTime}</span>
             </div>
           </div>
         </div>
 
         <div className="flex items-center gap-1 text-sm">
           <MapPin className="h-4 w-4" />
-          <p>Alta Bus Stand Road, Jublee Nagar Colony</p>
+          <p>{restaurant.address}</p>
         </div>
       </div>
 
@@ -207,7 +167,7 @@ const RestaurantDetail = () => {
         </div>
 
         <div className="space-y-4">
-          {mockMenuItems.map((item) => (
+          {restaurantMenu.map((item) => (
             <div key={item.id} className="border rounded-lg p-4">
               <div className="flex justify-between items-start">
                 <div className="flex-1">
@@ -228,14 +188,34 @@ const RestaurantDetail = () => {
                 </div>
                 <div className="text-right">
                   <p className="font-medium">₹{item.price}</p>
-                  <Button 
-                    variant="outline" 
-                    className="mt-2" 
-                    size="sm"
-                    onClick={() => addToCart(item)}
-                  >
-                    Add
-                  </Button>
+                  {cartQuantities[item.id] ? (
+                    <div className="flex items-center gap-2 mt-2 justify-end">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => updateCart(item, cartQuantities[item.id] - 1)}
+                      >
+                        -
+                      </Button>
+                      <span className="min-w-[20px] text-center">{cartQuantities[item.id]}</span>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => updateCart(item, cartQuantities[item.id] + 1)}
+                      >
+                        +
+                      </Button>
+                    </div>
+                  ) : (
+                    <Button 
+                      variant="outline" 
+                      className="mt-2" 
+                      size="sm"
+                      onClick={() => addToCart(item)}
+                    >
+                      Add
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>

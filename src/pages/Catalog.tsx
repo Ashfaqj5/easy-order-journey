@@ -2,30 +2,23 @@ import { useState } from "react";
 import { Search, MapPin, Bell, UtensilsCrossed, Salad, ChefHat, Fish, Cookie } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
-
-const mockCategories = [
-  { id: 1, name: "Biryani", icon: <UtensilsCrossed className="h-6 w-6" /> },
-  { id: 2, name: "Veg Snacks", icon: <Salad className="h-6 w-6" /> },
-  { id: 3, name: "Chicken", icon: <ChefHat className="h-6 w-6" /> },
-  { id: 4, name: "Fish", icon: <Fish className="h-6 w-6" /> },
-  { id: 5, name: "Desserts", icon: <Cookie className="h-6 w-6" /> }
-];
-
-const mockRestaurants = [
-  {
-    id: 1,
-    name: "MAYURI INN HOTEL",
-    rating: 4.5,
-    deliveryTime: "30-40 min",
-    address: "Alta Bus Stand Road, Jublee Nagar Colony",
-    cuisine: "Indian, Chinese, Tandoor",
-    closed: true
-  }
-];
+import { restaurants } from "@/data/mockData";
+import React from "react";
 
 const Catalog = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
+
+  const filteredRestaurants = restaurants.filter((restaurant) => {
+    const searchLower = searchQuery.toLowerCase();
+    return (
+      restaurant.name.toLowerCase().includes(searchLower) ||
+      restaurant.cuisine.toLowerCase().includes(searchLower) ||
+      restaurant.categories.some(category => 
+        category.name.toLowerCase().includes(searchLower)
+      )
+    );
+  });
 
   return (
     <div className="pt-4 pb-20 animate-fade-in">
@@ -33,7 +26,7 @@ const Catalog = () => {
         <div className="flex items-center gap-2">
           <MapPin className="h-5 w-5 text-orange-500" />
           <div>
-            <p className="text-sm text-orange-500">Nirmal, Telangana, India</p>
+            <p className="text-sm text-orange-500">Maryland Heights, Saint Louis</p>
           </div>
         </div>
         <Bell className="h-6 w-6" />
@@ -59,51 +52,56 @@ const Catalog = () => {
           <UtensilsCrossed className="h-12 w-12 text-orange-500" />
         </div>
 
-        <div className="mb-4">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-semibold">Categories</h2>
-            <button className="text-orange-500 text-sm">View All</button>
-          </div>
-          <div className="flex gap-4 overflow-x-auto pb-2">
-            {mockCategories.map((category) => (
-              <div key={category.id} className="flex flex-col items-center min-w-[80px]">
-                <div className="w-16 h-16 rounded-full bg-orange-100 flex items-center justify-center mb-2 text-orange-500">
-                  {category.icon}
-                </div>
-                <span className="text-xs text-center">{category.name}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
         <div>
-          <h2 className="text-lg font-semibold mb-4">All Restaurants</h2>
-          {mockRestaurants.map((restaurant) => (
-            <div 
-              key={restaurant.id} 
-              className="mb-4 border rounded-lg p-4 cursor-pointer hover:border-orange-500 transition-colors"
-              onClick={() => navigate(`/restaurant/${restaurant.id}`)}
-            >
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="font-medium">{restaurant.name}</h3>
-                {restaurant.closed && (
-                  <div className="bg-red-100 text-red-600 text-xs px-2 py-1 rounded">
-                    Closed Now
-                  </div>
-                )}
-              </div>
-              <div className="flex items-center gap-2 text-sm text-gray-500">
-                <span>⭐️ {restaurant.rating}</span>
-                <span>•</span>
-                <span>{restaurant.deliveryTime}</span>
-              </div>
-              <p className="text-sm text-gray-500">{restaurant.cuisine}</p>
-              <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
-                <MapPin className="h-4 w-4" />
-                {restaurant.address}
-              </p>
+          <h2 className="text-lg font-semibold mb-4">
+            {searchQuery ? 'Search Results' : 'All Restaurants'}
+          </h2>
+          
+          {filteredRestaurants.length === 0 ? (
+            <div className="text-center py-8 text-gray-500">
+              No restaurants found matching "{searchQuery}"
             </div>
-          ))}
+          ) : (
+            filteredRestaurants.map((restaurant) => (
+              <div 
+                key={restaurant.id} 
+                className="mb-4 border rounded-lg p-4 cursor-pointer hover:border-orange-500 transition-colors"
+                onClick={() => navigate(`/restaurant/${restaurant.id}`)}
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="font-medium">{restaurant.name}</h3>
+                  {restaurant.closed && (
+                    <div className="bg-red-100 text-red-600 text-xs px-2 py-1 rounded">
+                      Closed Now
+                    </div>
+                  )}
+                </div>
+                <div className="flex items-center gap-2 text-sm text-gray-500">
+                  <span>⭐️ {restaurant.rating}</span>
+                  <span>•</span>
+                  <span>{restaurant.deliveryTime}</span>
+                </div>
+                <p className="text-sm text-gray-500">{restaurant.cuisine}</p>
+                
+                {/* Categories */}
+                <div className="flex gap-2 mt-3 overflow-x-auto pb-2">
+                  {restaurant.categories.map((category) => (
+                    <div key={category.id} className="flex items-center gap-1 bg-orange-50 px-2 py-1 rounded-full min-w-fit">
+                      <div className="text-orange-500">
+                        {<category.icon size={16} />}
+                      </div>
+                      <span className="text-xs text-orange-700">{category.name}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <p className="text-sm text-gray-500 flex items-center gap-1 mt-3">
+                  <MapPin className="h-4 w-4" />
+                  {restaurant.address}
+                </p>
+              </div>
+            ))
+          )}
         </div>
       </div>
     </div>
