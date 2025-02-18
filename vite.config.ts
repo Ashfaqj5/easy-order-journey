@@ -13,7 +13,7 @@ export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     mode === 'development' &&
-    componentTagger(),
+    // componentTagger(),
     VitePWA({
       registerType: 'autoUpdate',
       devOptions: {
