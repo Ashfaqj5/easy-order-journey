@@ -23,7 +23,7 @@ const Checkout = () => {
             </div>
             <div className="flex-1">
               <p className="font-medium">Home Delivery</p>
-              <p className="text-sm text-gray-500">(₹ 20)</p>
+              <p className="text-sm text-gray-500">($ 20)</p>
             </div>
           </div>
         </div>
