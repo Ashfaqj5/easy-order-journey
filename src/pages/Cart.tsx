@@ -92,7 +92,7 @@ const Cart = () => {
                   )}
                 </div>
                 <div className="text-right">
-                  <p className="font-medium">₹{item.price}</p>
+                  <p className="font-medium">${item.price}</p>
                 </div>
               </div>
               
@@ -123,15 +123,15 @@ const Cart = () => {
           <div className="space-y-2 mb-4">
             <div className="flex justify-between">
               <span>Item Price</span>
-              <span>₹{subtotal}</span>
+              <span>${subtotal}</span>
             </div>
             <div className="flex justify-between">
               <span>Addons</span>
-              <span>₹{addons}</span>
+              <span>${addons}</span>
             </div>
             <div className="flex justify-between font-medium">
               <span>Subtotal</span>
-              <span>₹{total}</span>
+              <span>${total}</span>
             </div>
           </div>
           
