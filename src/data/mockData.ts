@@ -38,7 +38,7 @@ export const menuItems = {
     {
       id: 1,
       name: "Chicken Biryani",
-      price: 280,
+      price: 28,
       description: "Aromatic basmati rice cooked with tender chicken pieces and spices",
       isVeg: false,
       rating: 4.5,
@@ -47,16 +47,52 @@ export const menuItems = {
     {
       id: 2,
       name: "Paneer Butter Masala",
-      price: 220,
+      price: 22,
       description: "Fresh cottage cheese cubes in rich tomato gravy",
       isVeg: true,
       rating: 4.3,
       isSpicy: false
-    }
+    },
+{
+id: 3,
+  name: "Lamb Rogan Josh",
+  price: 28,
+  description: "Tender lamb cooked in a flavorful blend of spices",
+  isVeg: false,
+  rating: 4.7,
+  isSpicy: true
+},
+{
+  id: 4,
+  name: "Vegetable Pulao",
+  price: 24,
+  description: "Fragrant basmati rice cooked with mixed vegetables and mild spices",
+  isVeg: true,
+  rating: 4.2,
+  isSpicy: false
+},
+{
+  id: 5,
+  name: "Fish Curry",
+  price: 28,
+  description: "Succulent fish fillets in a rich, spicy curry sauce",
+  isVeg: false,
+  rating: 4.4,
+  isSpicy: true
+},
+{
+  id: 6,
+  name: "Dal Tadka",
+  price: 20,
+  description: "Lentils cooked with aromatic spices and tempered with ghee",
+  isVeg: true,
+  rating: 4.1,
+  isSpicy: false
+}
   ],
   2: [
     {
-      id: 3,
+      id: 7,
       name: "Mutton Manchurian",
       price: 320,
       description: "Indo-Chinese style mutton with spicy sauce",
@@ -65,13 +101,49 @@ export const menuItems = {
       isSpicy: true
     },
     {
-      id: 4,
+      id: 8,
       name: "Veg Fried Rice",
       price: 180,
       description: "Wok-tossed rice with mixed vegetables",
       isVeg: true,
       rating: 4.2,
       isSpicy: false
-    }
+    },
+{
+  id: 9,
+  name: "Prawn Curry",
+  price: 26,
+  description: "Succulent prawns cooked in a flavorful coconut-based curry",
+  isVeg: false,
+  rating: 4.5,
+  isSpicy: true
+},
+{
+  id: 10,
+  name: "Aloo Gobi",
+  price: 20,
+  description: "Potato and cauliflower cooked with Indian spices",
+  isVeg: true,
+  rating: 4.3,
+  isSpicy: false
+},
+{
+  id: 11,
+  name: "Chicken Tikka",
+  price: 27,
+  description: "Marinated chicken grilled to perfection",
+  isVeg: false,
+  rating: 4.4,
+  isSpicy: true
+},
+{
+  id: 12,
+  name: "Chole Bhature",
+  price: 220,
+  description: "Spicy chickpeas served with deep-fried bread",
+  isVeg: true,
+  rating: 4.6,
+  isSpicy: true
+}
   ]
-}; 
+};
