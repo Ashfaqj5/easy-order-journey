@@ -187,7 +187,7 @@ const RestaurantDetail = () => {
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="font-medium">₹{item.price}</p>
+                  <p className="font-medium">${item.price}</p>
                   {cartQuantities[item.id] ? (
                     <div className="flex items-center gap-2 mt-2 justify-end">
                       <Button
