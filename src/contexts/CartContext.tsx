@@ -29,6 +29,7 @@ interface CartContextType {
   addToCart: (item: MenuItem) => void;
   toggleFavorite: (restaurantId: number) => void;
   isFavorite: (restaurantId: number) => boolean;
+  clearCart: () => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -167,7 +168,8 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
       updateCart,
       addToCart,
       toggleFavorite,
-      isFavorite
+      isFavorite,
+      clearCart
     }}>
       {children}
     </CartContext.Provider>

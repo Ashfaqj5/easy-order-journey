@@ -1,18 +1,21 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { ShoppingBag } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { useEffect } from "react";
 
 const CartPopup = () => {
   const { totalItems, totalAmount, cartItems } = useCart();
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     console.log('Cart updated:', { totalItems, totalAmount, cartItems });
   }, [totalItems, totalAmount, cartItems]);
 
-  if (totalItems === 0) return null;
+  // Hide popup on cart and checkout pages
+  const hideOnPaths = ['/cart', '/checkout','/order-tracking'];
+  if (totalItems === 0 || hideOnPaths.includes(location.pathname)) return null;
 
   return (
     <AnimatePresence>

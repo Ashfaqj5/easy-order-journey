@@ -5,11 +5,13 @@ import { Input } from "@/components/ui/input";
 import { Link, useNavigate } from "react-router-dom";
 import PageTransition from "@/components/PageTransition";
 import SuccessAnimation from "@/components/SuccessAnimation";
+import { useCart } from "@/contexts/CartContext";
 
 const Checkout = () => {
   const navigate = useNavigate();
   const [isProcessing, setIsProcessing] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const { clearCart } = useCart();
 
   const handleConfirmOrder = async () => {
     setIsProcessing(true);
@@ -18,7 +20,7 @@ const Checkout = () => {
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     setShowSuccess(true);
-    sessionStorage.removeItem('cart'); // Clear cart
+    clearCart(); // Clear cart using context method
 
     // Wait for animation
     setTimeout(() => {
