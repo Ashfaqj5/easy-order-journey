@@ -1,3 +1,7 @@
+const VALID_CREDENTIALS = {
+  email: "user@example.com",
+  password: "password123"
+};
 import { UtensilsCrossed, Salad, ChefHat, Fish, Cookie } from "lucide-react";
 
 export const restaurants = [
